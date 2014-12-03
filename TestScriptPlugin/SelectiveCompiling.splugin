@@ -244,7 +244,6 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 	
 	function SetKeyOfTable(table,key,value)
 	{
-		//local ret_value = {};
 		foreach(idx, a in table)
 		{
 			if(idx == key)
@@ -253,37 +252,26 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			}
 			if(typeof a == "table" || typeof a == "array")
 			{
-				//local result = SetKeyOfTable(a,key,value,count);
 				SetKeyOfTable(table[idx],key,value);
-				//count += result.count;
-				//table[idx] = result.table;
 			}
-				
 		}
-		//ret_value.count <- count;
-		//ret_value.table <- table;
 	}
 	
 	function OnToggleAll(evt)
 	{
 		local property_table = CreatePropertyGridTableFromTable(build_tree);
-		line("### table vor OnToggle");
-		PrintTable(property_table,0);
-		local result = {};
 		if(current_value == true)
 		{
-			line("set all keys to true");
+			line("set all keys to false");
 			current_value = false;
 			SetKeyOfTable(property_table,"value",false);
 		}
 		else
 		{
-			line("set all keys to false");
+			line("set all keys to true");
 			current_value = true;
 			SetKeyOfTable(property_table,"value",true);
 		}
-		line("### table nach OnToggle");
-		PrintTable(property_table,0);
 			
 		PropgridHandler.Clear();
 
@@ -296,12 +284,9 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 	
 	function OnBuildClick(evt)
 	{
-		line("### property table");
 		local property_tabel = PropgridHandler.GetRoot();
-		PrintTable(property_tabel,0);
-		line("### created table");
 		local tab = CreateTableFromPropertyGridTable(property_tabel);
-		PrintTable(tab,0);
+		
 		line("### start building ");
 		foreach(idx,a in property_tabel)
 		{
