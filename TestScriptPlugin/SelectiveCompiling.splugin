@@ -152,7 +152,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		local count = 0;
 		foreach(idx, a in table)
 		{
-			line(" * CT * #" + count + " idx= "+idx);
+			//line(" * CT * #" + count + " idx= "+idx);
 			local children = {};
 			local cur_element = {};
 			
@@ -162,7 +162,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			cur_element["value"] <- true;	// Type BOOL
 			if(typeof a == "table")
 			{
-				line(" * CT * #" + count + " idx= "+idx+" children found");
+				//line(" * CT * #" + count + " idx= "+idx+" children found");
 				children = CreatePropertyGridTableFromTable(a);
 				cur_element["children"] <- children;
 			}
@@ -188,7 +188,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		local return_value = {value = 0, result = 0};
 		local project = name.BeforeFirst("/");
 		local target = name.AfterFirst("/");
-		line("Search for project \"" + project + "\" with target \"" + target + "\"");
+		//line("Search for project \"" + project + "\" with target \"" + target + "\"");
 		foreach(idx,a in table)
 		{
 			//line("Compare \"" + idx + "\" with \"" + project +"\"");
