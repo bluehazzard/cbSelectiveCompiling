@@ -1,0 +1,442 @@
+
+/*
+ * This file is part of the Code::Blocks IDE and licensed under the GNU General Public License, version 3
+ * http://www.gnu.org/licenses/gpl-3.0.html
+ *
+ * $Revision$
+ * $Id$
+ * $HeadURL$
+ */
+
+// user-dialog-test
+// Script plugins must extend cbScriptPlugin
+class user_dialog_test_Plugin extends cbScriptPlugin
+{
+    // mandatory to setup the plugin's info
+    constructor()
+    {
+        info = PluginInfo();
+
+        info.name = _T("SelectiveCompiling");
+        info.title = _T("Select the targets you want to compile");
+        info.version = _T("0.1a");
+        info.license = _T("GPL");
+
+
+    }
+
+    // optional to create menubar items
+    function GetMenu()
+    {
+        local entries = ::wxArrayString();
+        entries.Add(_T("Plugins/Selective Build"), 1);
+        return entries;
+    }
+
+    // optional to create context menu entries
+    /*function GetModuleMenu(who, data)
+    {
+
+    }*/
+
+    // optional to support ExecutePlugin(pluginNameString)
+    function Execute()
+    {
+        //ShowDialog();
+        return 0;
+    }
+	
+	function DisplayError(message)
+	{
+		error(message);
+		::ShowMessage(message);
+	}
+
+    // optional calback for menubar items clicking
+    function OnMenuClicked(index)
+    {
+        switch(index)
+		{
+			case 0:
+			{
+				ShowDialog();
+			}
+			break;
+			default:
+			{
+			}
+			break;
+		}
+    }
+
+    // optional calback for context menu items clicking
+    function OnModuleMenuClicked(index)
+    {
+
+    }
+
+    function line(str)
+    {
+        print(str + "\n");
+    }
+
+
+    function OnTimer(evt)
+    {
+        line("timer evt");
+    }
+
+	
+	function GetWorkspaceTree()
+	{
+		local project_manager = GetProjectManager();
+		local project_count = project_manager.GetProjectCount();
+		//line("Projects found: " + project_count);
+		local project_tree = {};
+		for(local i = 0; i < project_count; i++)
+		{
+			//line("try to get project #" + i);
+			local act_project = project_manager.GetProject(i);
+			local name = act_project.GetTitle();
+			//line("Actual Project: " + name);
+			local target_count = act_project.GetBuildTargetsCount();
+			//line("   Targets found: " + target_count);
+			local target_tree = {};
+			for(local a = 0; a < target_count; a++)
+			{
+				local act_target = act_project.GetBuildTarget(a);
+				local act_target_name = act_target.GetTitle();
+				//line("   Target " + a + ": "+  act_target_name);
+				target_tree[act_target_name] <- act_target;
+			}
+			project_tree[name] <- target_tree;
+		}
+		return project_tree;
+	}
+	
+	
+	function PrintDeep(text,a)
+	{
+		local space = " ";
+		local spaces_to_print = "";
+		for(local i = 0; i < a; i++)
+		{
+			spaces_to_print += space;
+		}
+		line(spaces_to_print+ text);
+	}
+	
+	function PrintTable(tree,deep)
+	{
+		foreach(idx, a in tree)
+		{
+			if(typeof a == "table")
+			{
+				PrintDeep( idx + " is table: ",deep);
+				PrintTable(a,deep+5);
+			} else if(typeof a == "array")
+			{
+				PrintDeep( idx + " is array: ",deep);
+				PrintTable(a,deep+5);
+			}
+			else
+			{
+				PrintDeep(idx + " is " + typeof a + " = " + a ,deep);
+			}
+		}
+	}
+	
+	function CreatePropertyGridTableFromTable(table)
+	{
+		local return_table = {};
+		local count = 0;
+		foreach(idx, a in table)
+		{
+			line(" * CT * #" + count + " idx= "+idx);
+			local children = {};
+			local cur_element = {};
+			
+			cur_element["name"] <- idx;
+			cur_element["label"] <- idx;
+			cur_element["type"] <- 2;	// Type BOOL
+			cur_element["value"] <- true;	// Type BOOL
+			if(typeof a == "table")
+			{
+				line(" * CT * #" + count + " idx= "+idx+" children found");
+				children = CreatePropertyGridTableFromTable(a);
+				cur_element["children"] <- children;
+			}
+			return_table[count] <- cur_element;
+			count++;
+		}
+		return return_table;
+	}
+	
+
+	
+	function OnClose (evt)
+	{
+		line("Close the Window...");
+		evt.Skip(true);		
+	}
+	
+	function FindBuildTarget(table,name)
+	{
+		if(typeof name != "wxString")
+			name = wxString(name);
+			
+		local return_value = {value = 0, result = 0};
+		local project = name.BeforeFirst("/");
+		local target = name.AfterFirst("/");
+		line("Search for project \"" + project + "\" with target \"" + target + "\"");
+		foreach(idx,a in table)
+		{
+			//line("Compare \"" + idx + "\" with \"" + project +"\"");
+			if(project.Cmp(idx) == 0)
+			{
+				foreach(i, val in a)
+				{
+					if(target.Cmp(i) == 0)
+					{
+						//line("Type of build target: " + typeof val + " to string:" + val);
+						return_value.value = val;
+						return_value.result = 1;
+						return return_value;
+					}
+				}
+				
+			}
+		}
+		return return_value;
+	}
+	
+	function WxStringToBool(wx_string)
+	{
+		if(typeof wx_string != "wxString")
+		{
+			error("WxStringToBool: The type of \"wx_string\" is not a wxString\n");
+			return false;
+		}
+		if(wx_string.CmpNoCase("True") == 0)
+			return true;
+		else
+			return false;
+	}
+	
+	function CreateTableFromPropertyGridTable(pg_table)
+	{
+		local return_table = {};
+		local count = 0;
+		foreach(idx,a in pg_table)
+		{
+			if(typeof a == "table")
+			{
+				return_table["child"+count] <- CreateTableFromPropertyGridTable(a);
+				count++;
+			}
+			else if(idx == "name")
+			{
+				return_table[a] <- pg_table["value"];
+			}
+		}
+		return return_table;
+	}
+	
+	function SetKeyOfTable(table,key,value)
+	{
+		//local ret_value = {};
+		foreach(idx, a in table)
+		{
+			if(idx == key)
+			{
+				table[idx] = value;
+			}
+			if(typeof a == "table" || typeof a == "array")
+			{
+				//local result = SetKeyOfTable(a,key,value,count);
+				SetKeyOfTable(table[idx],key,value);
+				//count += result.count;
+				//table[idx] = result.table;
+			}
+				
+		}
+		//ret_value.count <- count;
+		//ret_value.table <- table;
+	}
+	
+	function OnToggleAll(evt)
+	{
+		local property_table = CreatePropertyGridTableFromTable(build_tree);
+		line("### table vor OnToggle");
+		PrintTable(property_table,0);
+		local result = {};
+		if(current_value == true)
+		{
+			line("set all keys to true");
+			current_value = false;
+			SetKeyOfTable(property_table,"value",false);
+		}
+		else
+		{
+			line("set all keys to false");
+			current_value = true;
+			SetKeyOfTable(property_table,"value",true);
+		}
+		line("### table nach OnToggle");
+		PrintTable(property_table,0);
+			
+		PropgridHandler.Clear();
+
+        if(PropgridHandler.Populate(property_table) < 0)
+		{
+			error("Could not populate the property grid\nTry to throw an error...\n");
+			throw "error";
+		}
+	}
+	
+	function OnBuildClick(evt)
+	{
+		line("### property table");
+		local property_tabel = PropgridHandler.GetRoot();
+		PrintTable(property_tabel,0);
+		line("### created table");
+		local tab = CreateTableFromPropertyGridTable(property_tabel);
+		PrintTable(tab,0);
+		line("### start building ");
+		foreach(idx,a in property_tabel)
+		{
+			local project = a["label"];
+			local build = a["value"];
+			line("Found Project: \"" + project + "\" with value " + build);
+			
+			if(WxStringToBool(build))
+			{
+				line("So lets build");
+				local children = a["children"];
+				foreach(idx2,b in children)
+				{
+					local target = b["label"];
+					local target_value = b["value"];
+					if(WxStringToBool(target_value))
+					{
+						line("# build in \"" + project + "\" Target \"" + target+ "\"");
+						local build_target = FindBuildTarget(build_tree,project + "/" + target);
+						if(build_target.result == 0)
+							line("Could not find Target");
+						else
+						{
+							line("Type of build target: " + typeof build_target.value + " to string:" + build_target.value);
+							local result = GetCompilerPlugin().Build(build_target.value);
+							line("Build finised with result: " + result);
+						}
+					}
+				}
+			}
+			
+		}
+		
+		wxBell();
+		InfoWindow("Compiling finished","the compiling has been finished",5000,1);
+		
+	}
+
+    function ShowDialog()
+    {
+        line("Start " + info.name);
+		line("Version: " + info.version);
+        
+		
+		if(loaded == false)
+		{
+			main_dialog = CreateWxDialog(this);
+			
+			// Load the resource zip file
+			
+			if(LoadResource("SelectiveCompiling.zip") == false)
+			{
+				DisplayError("Could not load resource \"SelectiveCompiling.zip\" ");
+				return;
+			}
+			
+			local ret = main_dialog.LoadFromXRCPool("selective_compiling_main_diag");
+			if(ret != RESOURCE_LOADED_SUCCESFULLY)
+			{
+				DisplayError("Could not load \"selective_compiling_main_diag\" from Resource pool");
+				return;
+			}
+			
+			PropgridHandler = wxPropertyGridWrapper(main_dialog.GetControl("m_propertygrid"));
+			local window = main_dialog.GetWindow();
+			window.SetLabel("Hallo");
+			//window.Fit();
+			//window.SetAutoLayout(true);
+			//local sizer = main_dialog.GetControl("main_sizer");
+			//sizer.Fit(window);
+			
+			line("Register events");
+            main_dialog.RegisterEventHandler(wxEVT_CLOSE_WINDOW,XRCID("selective_compiling_main_diag"),this,"OnClose");
+			main_dialog.RegisterEventHandler(wxEVT_BUTTON,XRCID("m_button_build"),this,"OnBuildClick");
+			main_dialog.RegisterEventHandler(wxEVT_BUTTON,XRCID("m_button_toggle_all"),this,"OnToggleAll");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_CHECKBOX_CLICKED,XRCID("controls_unchecked_checkbox"),this,"OnCheckbox");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_CHECKBOX_CLICKED,XRCID("controls_unchecked_checkbox"),this,"OnCheckbox");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_COMBOBOX_SELECTED,XRCID("controls_combobox"),this,"OnComboBox");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_TEXT_UPDATED,XRCID("controls_combobox"),this,"OnComboBoxText");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_RADIOBOX_SELECTED,XRCID("controls_radiobox"),this,"OnRadioBox");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_HYPERLINK,XRCID("controls_hyperlink"),this,"OnURLClick");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_CHOICE_SELECTED,XRCID("controls_choice"),this,"OnChoice");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_LISTBOX_SELECTED,XRCID("m_listBox1"),this,"OnListBox");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_RADIOBUTTON_SELECTED,XRCID("m_radioBtn1"),this,"OnRadioButton");
+            // dialog.RegisterEventHandler(wxEVT_CHECKLISTBOX,XRCID("m_checkList1"),this,"OnCheckList");
+            // dialog.RegisterEventHandler(wxEVT_SCROLL_CHANGED,XRCID("m_slider1"),this,"OnSlider");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,XRCID("m_toggleBtn1"),this,"OnTogButton");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_COLOURPICKER_CHANGED,XRCID("m_colourPicker1"),this,"OnColour");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_FILEPICKER_CHANGED,XRCID("m_filePicker1"),this,"OnFilePicker");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_DIRPICKER_CHANGED,XRCID("m_dirPicker1"),this,"OnFilePicker");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_SPINCTRL_UPDATED,XRCID("m_spinCtrl1"),this,"OnSpinCtrl");
+
+			
+			loaded = true;
+		
+		}
+		
+		build_tree = GetWorkspaceTree();
+		PrintTable(build_tree,0);
+		property_table = CreatePropertyGridTableFromTable(build_tree);
+		line("# property grid table: ");
+		PrintTable(property_table,0);
+		
+		PropgridHandler.Clear();
+
+        if(PropgridHandler.Populate(property_table) < 0)
+		{
+			error("Could not populate the property grid\nTry to throw an error...\n");
+			throw "error";
+		}
+		
+		main_dialog.Show(true);
+
+		
+        //local retcode = dialog.Show(true);
+		
+
+		
+		
+		
+        //print("dialog exited with " + retcode);
+
+    };
+
+    main_dialog = 0;
+	info = 0;
+	loaded = false;
+	PropgridHandler = 0;
+	property_table = 0;
+	build_tree = 0;
+	current_value = true;
+}
+
+// this call actually registers the script plugin with Code::Blocks
+RegisterPlugin(user_dialog_test_Plugin());
+
+// if you want to call this plugin's Execute() function, use this in a script:
+// ExecutePlugin(_T("Scripting_TestPlugin"));

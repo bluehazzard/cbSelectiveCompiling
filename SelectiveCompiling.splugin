@@ -1,0 +1,417 @@
+
+/*
+ * This file is part of the Code::Blocks IDE and licensed under the GNU General Public License, version 3
+ * http://www.gnu.org/licenses/gpl-3.0.html
+ *
+ * $Revision$
+ * $Id$
+ * $HeadURL$
+ */
+
+// user-dialog-test
+// Script plugins must extend cbScriptPlugin
+class user_dialog_test_Plugin extends cbScriptPlugin
+{
+    // mandatory to setup the plugin's info
+    constructor()
+    {
+        info = PluginInfo();
+
+        info.name = _T("SelectiveCompiling");
+        info.title = _T("Select the targets you want to compile");
+        info.version = _T("0.1a");
+        info.license = _T("GPL");
+
+
+    }
+
+    // optional to create menubar items
+    function GetMenu()
+    {
+        local entries = ::wxArrayString();
+        entries.Add(_T("Build/Selective Build"), 1);
+        return entries;
+    }
+
+    // optional to create context menu entries
+    /*function GetModuleMenu(who, data)
+    {
+
+    }*/
+
+    // optional to support ExecutePlugin(pluginNameString)
+    function Execute()
+    {
+        ShowDialog();
+        return 0;
+    }
+	
+	function DisplayError(message)
+	{
+		error(message);
+		::ShowMessage(message);
+	}
+
+    // optional calback for menubar items clicking
+    function OnMenuClicked(index)
+    {
+        switch(index)
+		{
+			case 0;
+			{
+				ShowDialog();
+			}
+			break;
+			default:
+			{
+			}
+			break;
+		}
+        {
+            ShowDialog();
+        }
+    }
+
+    // optional calback for context menu items clicking
+    function OnModuleMenuClicked(index)
+    {
+
+    }
+
+    function line(str)
+    {
+        print(str + "\n");
+    }
+
+    function OnClick(evt)
+    {
+        print("Got a event from type " + evt.GetEventType() + " from id " + evt.GetId() + " at time " + evt.GetTimestamp() + "\n" );
+        local value = dialog.GetControl("text").GetValue();
+        print("Content of text control: " + value + "\n");
+        local button = dialog.GetControl("clickme_btn").GetLabel();
+        print("Content of button control: " + button + "\n");
+
+        local gauge_val = value.ToInt(10);
+
+        if(gauge_val.success)
+            dialog.GetControl("controls_horizontal_gauge").SetValue(gauge_val.value);
+
+        print("gauge range: " + dialog.GetControl("controls_horizontal_gauge").GetRange() + "\n");
+
+
+    }
+
+    function OnCheckbox(evt)
+    {
+        local state = dialog.GetControl("controls_unchecked_checkbox").Get3StateValue();
+        print("checkbox clicked: state:" +state +"\n");
+    }
+
+    function OnChoiceBox(evt)
+    {
+        local sel = dialog.GetControl("controls_choice").GetCurrentSelection();
+        local txt = dialog.GetControl("controls_choice").GetString(sel);
+        print("checkbox clicked: state:" + sel +" in text: "+ txt +"\n");
+    }
+
+
+
+    function OnComboBox(evt)
+    {
+        local sel = dialog.GetControl("controls_combobox").GetSelection();
+        local txt = dialog.GetControl("controls_combobox").GetString(sel);
+        print("ComboBox clicked: state:" + sel +" in text: "+ txt +"\n");
+    }
+
+    function OnComboBoxText(evt)
+    {
+        local txt = "hallo";
+        txt = dialog.GetControl("controls_combobox").GetValue();
+        print("ComboBox clicked state: in text" + txt + "\n");
+    }
+
+    function OnMouseClick(evt)
+    {
+        print("mouse clicked \n");
+    }
+
+    function OnMouseMoved(evt)
+    {
+        print("mouse moved\n")
+    }
+
+    function OnRadioBox(evt)
+    {
+        local sel = dialog.GetControl("controls_radiobox").GetSelection();
+        local string = dialog.GetControl("controls_radiobox").GetString(sel);
+        print("RadioBox selection: " + sel + " " + string + "\n");
+        if(sel == 1)
+             dialog.GetControl("controls_radiobox").Show(4,false);
+        else
+            dialog.GetControl("controls_radiobox").Show(4,true);
+        if(sel == 2)
+             dialog.GetControl("controls_radiobox").Enable(3,false);
+        else
+            dialog.GetControl("controls_radiobox").Enable(3,true);
+    }
+
+    function OnURLClick(evt)
+    {
+        local url = dialog.GetControl("controls_hyperlink").GetURL();
+        print("Url: " + url + "\n");
+        dialog.GetControl("controls_hyperlink").SetVisitedColour(wxColour(255,0,0));
+        //dialog.GetControl("controls_hyperlink").SetVisited(true);
+        dialog.GetControl("controls_hyperlink").SetHoverColour(wxColour(128,128,0));
+        dialog.GetControl("m_listBox1").Append("hallo");
+    }
+
+    function OnChoice(evt)
+    {
+        local sel = dialog.GetControl("controls_choice").GetCurrentSelection();
+        local text = dialog.GetControl("controls_choice").GetString(sel);
+        print("choice: " + text + "\n");
+    }
+
+    function OnListBox(evt)
+    {
+        local sel = dialog.GetControl("m_listBox1").GetSelections();
+        local txt = "listbox selected: ";
+        foreach(val in sel)
+            txt += val + " ";
+        print(txt + "\n");
+    }
+
+    function OnRadioButton(evt)
+    {
+        local is_sel = dialog.GetControl("m_radioBtn1").GetValue();
+        line("Radio button: " + is_sel);
+    }
+
+    function OnCheckList(evt)
+    {
+        local checkboxlist = dialog.GetControl("m_checkList1");
+        local sel = checkboxlist.GetCheckedItems();
+        local txt = "check list selected: ";
+        foreach(val in sel)
+            txt += val + " ";
+        line(txt);
+
+        txt = "Name of checked items: ";
+
+        foreach(val in sel)
+            txt += checkboxlist.GetString(val) + " ";
+        line(txt);
+    }
+
+    function OnSlider(evt)
+    {
+        local value = dialog.GetControl("m_slider1").GetValue();
+        local txt = "slider :" + value;
+        line(txt);
+        dialog.GetControl("m_staticText1").SetLabel(txt);
+    }
+
+    function OnTogButton(evt)
+    {
+        local value = dialog.GetControl("m_toggleBtn1").GetValue();
+        line("Toggle button value: "+ value);
+    }
+
+    function OnColour(evt)
+    {
+        local colour = dialog.GetControl("m_colourPicker1").GetColour()
+        line("colour picker selected: " + colour);
+    }
+
+    function OnFilePicker(evt)
+    {
+        local file;
+        if(evt.GetId() == XRCID("m_filePicker1"))
+            file = dialog.GetControl("m_filePicker1").GetPath();
+        else
+            file = dialog.GetControl("m_dirPicker1").GetPath();
+
+        line("file/dir picker: " + file);
+    }
+
+    function OnTimer(evt)
+    {
+        line("timer evt");
+    }
+
+    function OnSpinCtrl(evt)
+    {
+        local value = dialog.GetControl("m_spinCtrl1").GetValue();
+        line("Spin Ctrl value: "+ value);
+        if(value == 10)
+            dialog.GetControl("m_spinCtrl1").SetValue("Hello");
+        else if(value == 15)
+             dialog.GetControl("m_spinCtrl1").SetValue(19);
+    }
+
+    function StartPropgrid(load_file)
+    {
+        if(load_file)
+        {
+            local path_to_xrc = ::wxGetFileFromUser("Pleas select the XRC test file to be loaded ","XRC test file"," ","*.xml;*.xrc",wxFD_OPEN|wxFD_FILE_MUST_EXIST).Item(0);
+
+            dialog = CreateWxDialog(this);
+            local retcode = dialog.LoadFromXRCFile(path_to_xrc,"test_dialog")
+            if(retcode == XRC_FILE_NOT_FOUND || retcode == RESOURCE_NOT_FOUND_IN_LOADED_RESOURCES)
+            {
+                error("could not load the xrc file: " + path_to_xrc + " retcode: " + retcode);
+                return;
+            }
+        }
+
+        local PropgridHandler = wxPropertyGridWrapper(dialog.GetControl("m_propertygrid"));
+        local table =
+        {
+            [0] = {
+                name = "hallo_1",
+                label = "label",
+                type = 2,
+                style = 1,
+                children = {
+                    [0] = {
+                            name = "children_hallo_1",
+                            label = "children_label",
+                            type = 2
+                           }
+                }
+            },
+            [1] = {
+                name = "hallo_2",
+                label = "label_2",
+                type = 2
+            }
+        }
+
+        if(PropgridHandler.Populate(table) < 0)
+	{
+	    print("Could not populate the property grid\nTry to throw an error...\n");
+	    throw "error";
+ 	}
+
+        if(load_file)
+            dialog.Show(true);
+
+    };
+	
+	function GetWorkspaceTree()
+	{
+		local project_manager = GetProjectManager();
+		local project_count = project_manager.GetProjectCount();
+		local project_tree <- {};
+		local 
+		for(local i = 0; i < project_count; i++)
+		{
+			local act_project = project_manager.GetProject(project_count);
+			local name = act_project.GetTitle();
+			line("Actual Project: " + name);
+			local target_count = act_project.GetBuildTargetsCount();
+			line("   Targets found: " + target_count);
+			local target_tree <- {}:
+			for(local a = 0; a < target_count; a++)
+			{
+				local act_target = act_project.GetBuildTarget(target_count);
+				local act_target_name = act_target.GetTitle();
+				line("   Target " + a + ": "+  act_target_name);
+				target_tree[act_target_name._tostring()] <- act_target;
+			}
+			project_tree[name._tostring()] <- target_tree;
+		}
+		return project_tree;
+	}
+	
+	function PrintDeep(text,a)
+	{
+		for(local i = 0; i < a; i++)
+			print(" ");
+		
+		print(text);
+	}
+	
+	function PrintTable(tree,deep)
+	{
+		
+		foreach(idx, a in tree)
+		{
+			PrintDeep(idx + " is ",deep)
+			if(typeof a == "table")
+			{
+				print("table: \n")
+				PrintTable(a,deep+5);
+			}
+			else
+			{
+				PrintDeep(idx + " is " + typeof a + " = " + a._tostring() ,deep);
+			}
+		}
+	}
+
+    function ShowDialog()
+    {
+        line("Start " + info.name);
+		line("Version: " + info.version);
+        
+		/*main_dialog = CreateWxDialog(this);
+		
+		// Load the resource zip file 
+		if(LoadResource("SelectiveCompiling.zip") == false)
+		{
+			DisplayError("Could not load resource \"SelectiveCompiling.zip\" ");
+			return;
+		}
+		
+		local ret = dialog.LoadFromXRCPool("selective_compiling_main_diag");
+		if(ret != RESOURCE_LOADED_SUCCESFULLY)
+		{
+			DisplayError("Could not load \"selective_compiling_main_diag\" from Resource pool");
+			return;
+		}
+		
+        if(dialog.IsLoaded() == false)
+        {
+
+
+            // dialog.RegisterEventHandler(wxEVT_BUTTON,XRCID("clickme_btn"),this,"OnClick");
+            // dialog.RegisterEventHandler(wxEVT_LEFT_DOWN,XRCID("test_dialog"),this,"OnMouseClick");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_CHECKBOX_CLICKED,XRCID("controls_unchecked_checkbox"),this,"OnCheckbox");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_CHECKBOX_CLICKED,XRCID("controls_unchecked_checkbox"),this,"OnCheckbox");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_COMBOBOX_SELECTED,XRCID("controls_combobox"),this,"OnComboBox");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_TEXT_UPDATED,XRCID("controls_combobox"),this,"OnComboBoxText");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_RADIOBOX_SELECTED,XRCID("controls_radiobox"),this,"OnRadioBox");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_HYPERLINK,XRCID("controls_hyperlink"),this,"OnURLClick");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_CHOICE_SELECTED,XRCID("controls_choice"),this,"OnChoice");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_LISTBOX_SELECTED,XRCID("m_listBox1"),this,"OnListBox");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_RADIOBUTTON_SELECTED,XRCID("m_radioBtn1"),this,"OnRadioButton");
+            // dialog.RegisterEventHandler(wxEVT_CHECKLISTBOX,XRCID("m_checkList1"),this,"OnCheckList");
+            // dialog.RegisterEventHandler(wxEVT_SCROLL_CHANGED,XRCID("m_slider1"),this,"OnSlider");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,XRCID("m_toggleBtn1"),this,"OnTogButton");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_COLOURPICKER_CHANGED,XRCID("m_colourPicker1"),this,"OnColour");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_FILEPICKER_CHANGED,XRCID("m_filePicker1"),this,"OnFilePicker");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_DIRPICKER_CHANGED,XRCID("m_dirPicker1"),this,"OnFilePicker");
+            // dialog.RegisterEventHandler(wxEVT_COMMAND_SPINCTRL_UPDATED,XRCID("m_spinCtrl1"),this,"OnSpinCtrl");
+
+        }*/
+
+        //local retcode = dialog.Show(true);
+		
+
+		PrintTable(GetWorkspaceTree(),0);
+		
+		
+        //print("dialog exited with " + retcode);
+
+    };
+
+    main_dialog = 0;
+	info = 0;
+}
+
+// this call actually registers the script plugin with Code::Blocks
+RegisterPlugin(user_dialog_test_Plugin());
+
+// if you want to call this plugin's Execute() function, use this in a script:
+// ExecutePlugin(_T("Scripting_TestPlugin"));

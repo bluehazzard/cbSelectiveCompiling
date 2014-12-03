@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_plugin_manifest_file>
+    <SdkVersion major="1" minor="10" release="0" />
+    <Plugin name="SelectiveCompiling">
+        <Value title="SelectiveCompiling" />
+        <Value version="1.0" />
+        <Value description="A Plugin to select the build Targets you want to build." />
+        <Value author="bluehazzard" />
+        <Value authorEmail="bluehazzard2@gmail.com" />
+        <Value authorWebsite="http://www.codeblocks.org" />
+        <Value thanksTo="C::B Team" />
+        <Value license="GPL" />
+    </Plugin>
+</CodeBlocks_plugin_manifest_file>

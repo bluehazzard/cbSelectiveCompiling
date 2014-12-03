@@ -1,0 +1,11 @@
+<?xml version="1.0" standalone=no>
+<CodeBlocks_plugin_install_file>
+	<Plugin type="SCRIPT" name="SelectiveCompiling" version_major=1 version_minor=0>
+		<preinstall>
+
+		</preinstall>
+		<postinstall>
+
+		</postinstall>
+	</Plugin>
+</CodeBlocks_plugin_install_file>
