@@ -159,6 +159,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			cur_element["name"] <- idx;
 			cur_element["label"] <- idx;
 			cur_element["type"] <- 2;	// Type BOOL
+			cur_element["style"] <- 1;	// Use a checkbox
 			cur_element["value"] <- true;	// Type BOOL
 			if(typeof a == "table")
 			{
@@ -287,6 +288,14 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		local property_tabel = PropgridHandler.GetRoot();
 		local tab = CreateTableFromPropertyGridTable(property_tabel);
 		
+		current_compiling = {
+		build_list = array(0),
+		target = 0,
+		compiling = false,
+		project = 0,
+		next_target = 0
+		};
+		
 		line("### start building ");
 		foreach(idx,a in property_tabel)
 		{
@@ -304,6 +313,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 					local target_value = b["value"];
 					if(WxStringToBool(target_value))
 					{
+						
 						line("# build in \"" + project + "\" Target \"" + target+ "\"");
 						local build_target = FindBuildTarget(build_tree,project + "/" + target);
 						if(build_target.result == 0)
@@ -311,8 +321,12 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 						else
 						{
 							line("Type of build target: " + typeof build_target.value + " to string:" + build_target.value);
-							local result = GetCompilerPlugin().Build(build_target.value);
-							line("Build finised with result: " + result);
+							local tmp_list = {};
+							tmp_list.project <- project;
+							tmp_list.target <- build_target.value;
+							current_compiling.build_list.append(tmp_list);
+							//local result = GetCompilerPlugin().Build(build_target.value);
+							//line("Build finised with result: " + result);
 						}
 					}
 				}
@@ -320,9 +334,67 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			
 		}
 		
-		wxBell();
-		InfoWindow("Compiling finished","the compiling has been finished",5000,1);
+		current_compiling.compiling = true;
+		main_dialog.GetControl("m_button_abort").Enable(true);
+		old_project = GetProjectManager().GetActiveProject();
+		OnCompilingFinished(0);
 		
+
+		
+	}
+	
+	function FindProject(name)
+	{
+		local count = GetProjectManager().GetProjectCount();
+		for(local i =0; i < count; i++)
+		{
+			local cur_pro = GetProjectManager().GetProject(i);
+			if(cur_pro.GetTitle().Cmp(name) == 0)
+			{
+				return cur_pro;
+			}
+		}
+		return 0;
+	}
+	
+	function OnCompilingFinished(evt)
+	{
+		if(current_compiling.compiling == true)
+		{
+			if(current_compiling.next_target > 0)
+			{
+				line("last build finished with exit code: " + GetCompilerPlugin().GetExitCode());
+			}
+			if(current_compiling.next_target < current_compiling.build_list.len())
+			{
+				local proj = FindProject(current_compiling.build_list[current_compiling.next_target].project);
+				GetProjectManager().SetProject(proj,false);
+				line("start building " + current_compiling.build_list[current_compiling.next_target].project + "/" + current_compiling.build_list[current_compiling.next_target].target.GetTitle());
+				local index = current_compiling.next_target;
+				current_compiling.next_target++;
+				local result = GetCompilerPlugin().Build(current_compiling.build_list[index].target);
+				
+				//line("Build finised with result: " + result);
+			}
+			else
+			{
+				// we have build the whole list
+				// lets clean up
+				current_compiling.compiling = false;
+				GetProjectManager().SetProject(old_project,false);
+				wxBell();
+				InfoWindow("Compiling finished","the compiling has been finished",5000,1);
+				main_dialog.GetControl("m_button_abort").Enable(false);
+			}
+		}
+	}
+	
+	function OnAbortBuild(evt)
+	{
+		line("Abort Building");
+		current_compiling.compiling = false;
+		GetCompilerPlugin().KillProcess();
+		main_dialog.GetControl("m_button_abort").Enable(false);
 	}
 
     function ShowDialog()
@@ -362,6 +434,12 @@ class user_dialog_test_Plugin extends cbScriptPlugin
             main_dialog.RegisterEventHandler(wxEVT_CLOSE_WINDOW,XRCID("selective_compiling_main_diag"),this,"OnClose");
 			main_dialog.RegisterEventHandler(wxEVT_BUTTON,XRCID("m_button_build"),this,"OnBuildClick");
 			main_dialog.RegisterEventHandler(wxEVT_BUTTON,XRCID("m_button_toggle_all"),this,"OnToggleAll");
+			main_dialog.RegisterEventHandler(wxEVT_BUTTON,XRCID("m_button_abort"),this,"OnAbortBuild");
+			
+			RegisterCBEvent(this,cbEVT_COMPILER_FINISHED,"OnCompilingFinished");
+			
+			main_dialog.GetControl("m_button_abort").Enable(false);
+			
             // dialog.RegisterEventHandler(wxEVT_COMMAND_CHECKBOX_CLICKED,XRCID("controls_unchecked_checkbox"),this,"OnCheckbox");
             // dialog.RegisterEventHandler(wxEVT_COMMAND_CHECKBOX_CLICKED,XRCID("controls_unchecked_checkbox"),this,"OnCheckbox");
             // dialog.RegisterEventHandler(wxEVT_COMMAND_COMBOBOX_SELECTED,XRCID("controls_combobox"),this,"OnComboBox");
@@ -418,6 +496,14 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 	property_table = 0;
 	build_tree = 0;
 	current_value = true;
+	current_compiling = {
+		build_list = array(0),
+		target = 0,
+		compiling = false,
+		project = 0,
+		next_target = 0
+	};
+	old_project = 0;
 }
 
 // this call actually registers the script plugin with Code::Blocks

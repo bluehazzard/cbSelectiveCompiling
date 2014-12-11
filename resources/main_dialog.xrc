@@ -18,14 +18,21 @@
 			<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
 			<border>5</border>
 			<object class="wxButton" name="m_button_build">
-				<label>"Build"</label>
+				<label>Build</label>
 			</object>
 		</object>
 		<object class="sizeritem">
 			<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
 			<border>5</border>
 			<object class="wxButton" name="m_button_toggle_all">
-				<label>"Toggle All"</label>
+				<label>Toggle All</label>
+			</object>
+		</object>
+		<object class="sizeritem">
+			<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+			<border>5</border>
+			<object class="wxButton" name="m_button_abort">
+				<label>Cancel</label>
 			</object>
 		</object>
 		</object>
