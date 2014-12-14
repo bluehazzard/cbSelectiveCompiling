@@ -85,31 +85,45 @@ class user_dialog_test_Plugin extends cbScriptPlugin
     {
         line("timer evt");
     }
-
 	
+	/*
+		Return an array with the projects and targets in ordered sequence:
+		[0].name
+		[0].targets[0].name
+		[0].targets[0].target
+	
+	*/
 	function GetWorkspaceTree()
 	{
 		local project_manager = GetProjectManager();
 		local project_count = project_manager.GetProjectCount();
 		//line("Projects found: " + project_count);
-		local project_tree = {};
+		local project_tree = [];
+		
 		for(local i = 0; i < project_count; i++)
 		{
+			local tmp_project = {};
+			tmp_project.targets <- [];
 			//line("try to get project #" + i);
 			local act_project = project_manager.GetProject(i);
 			local name = act_project.GetTitle();
+			tmp_project.name <- name;
 			//line("Actual Project: " + name);
 			local target_count = act_project.GetBuildTargetsCount();
 			//line("   Targets found: " + target_count);
 			local target_tree = {};
 			for(local a = 0; a < target_count; a++)
 			{
+				local tmp_target = {};
 				local act_target = act_project.GetBuildTarget(a);
 				local act_target_name = act_target.GetTitle();
+				tmp_target.name <- act_target_name;
+				tmp_target.target <- act_target;
 				//line("   Target " + a + ": "+  act_target_name);
-				target_tree[act_target_name] <- act_target;
+				
+				tmp_project.targets.append(tmp_target);
 			}
-			project_tree[name] <- target_tree;
+			project_tree.append(tmp_project);
 		}
 		return project_tree;
 	}
@@ -173,6 +187,33 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		return return_table;
 	}
 	
+	function CreatePropertyGridFromProjectTable(table)
+	{
+		local return_table = {};
+		local count = 0;
+		foreach(idx, a in table)
+		{
+			line(" * CT * #" + count + " idx= "+idx);
+			local children = {};
+			local cur_element = {};
+			
+			cur_element["name"] <- a.name;
+			cur_element["label"] <- a.name;
+			cur_element["type"] <- 2;	// Type BOOL
+			cur_element["style"] <- 1;	// Use a checkbox
+			cur_element["value"] <- true;	// Type BOOL
+			if(a.rawin("targets"))
+			{
+				line(" * CT * #" + count + " idx= "+idx+" children found");
+				children = CreatePropertyGridFromProjectTable(a.targets);
+				cur_element["children"] <- children;
+			}
+			return_table[count] <- cur_element;
+			count++;
+		}
+		return return_table;
+	}
+	
 
 	
 	function OnClose (evt)
@@ -193,14 +234,14 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		foreach(idx,a in table)
 		{
 			//line("Compare \"" + idx + "\" with \"" + project +"\"");
-			if(project.Cmp(idx) == 0)
+			if(project.Cmp(a.name) == 0)
 			{
-				foreach(i, val in a)
+				foreach(i, val in a.targets)
 				{
-					if(target.Cmp(i) == 0)
+					if(target.Cmp(val.name) == 0)
 					{
 						//line("Type of build target: " + typeof val + " to string:" + val);
-						return_value.value = val;
+						return_value.value = val.target;
 						return_value.result = 1;
 						return return_value;
 					}
@@ -260,7 +301,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 	
 	function OnToggleAll(evt)
 	{
-		local property_table = CreatePropertyGridTableFromTable(build_tree);
+		local property_table = CreatePropertyGridFromProjectTable(build_tree);
 		if(current_value == true)
 		{
 			line("set all keys to false");
@@ -286,7 +327,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 	function OnBuildClick(evt)
 	{
 		local property_tabel = PropgridHandler.GetRoot();
-		local tab = CreateTableFromPropertyGridTable(property_tabel);
+		local tab = CreatePropertyGridFromProjectTable(property_tabel);
 		
 		current_compiling = {
 		build_list = array(0),
@@ -464,7 +505,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		
 		build_tree = GetWorkspaceTree();
 		PrintTable(build_tree,0);
-		property_table = CreatePropertyGridTableFromTable(build_tree);
+		property_table = CreatePropertyGridFromProjectTable(build_tree);
 		line("# property grid table: ");
 		PrintTable(property_table,0);
 		
