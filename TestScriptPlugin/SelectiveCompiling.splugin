@@ -18,7 +18,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
         info = PluginInfo();
 
         info.name = _T("SelectiveCompiling");
-        info.title = _T("Select the targets you want to compile");
+        info.title = _T("SelectiveCompiling");
         info.version = _T("0.1a");
         info.license = _T("GPL");
 
@@ -80,12 +80,6 @@ class user_dialog_test_Plugin extends cbScriptPlugin
         print(str + "\n");
     }
 
-
-    function OnTimer(evt)
-    {
-        line("timer evt");
-    }
-	
 	/*
 		Return an array with the projects and targets in ordered sequence:
 		[0].name
@@ -372,16 +366,10 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 					}
 				}
 			}
-			
+			main_dialog.GetControl("m_build_gauge").Pulse();
 		}
-		
-		current_compiling.compiling = true;
-		main_dialog.GetControl("m_button_abort").Enable(true);
-		old_project = GetProjectManager().GetActiveProject();
+		BeginBuild();
 		OnCompilingFinished(0);
-		
-
-		
 	}
 	
 	function FindProject(name)
@@ -398,6 +386,27 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		return 0;
 	}
 	
+	function BeginBuild()
+	{
+		main_dialog.GetControl("m_build_gauge").SetRange(current_compiling.build_list.len());
+		current_compiling.compiling = true;
+		main_dialog.GetControl("m_button_abort").Enable(true);
+		main_dialog.GetControl("m_button_build").Enable(false);
+		main_dialog.GetControl("m_button_toggle_all").Enable(false);
+		old_project = GetProjectManager().GetActiveProject();
+	}
+	
+	function EndBuild()
+	{
+		main_dialog.GetControl("m_build_gauge").SetRange(100);
+		main_dialog.GetControl("m_build_gauge").SetValue(100);
+		current_compiling.compiling = false;
+		GetProjectManager().SetProject(old_project,false);
+		main_dialog.GetControl("m_button_abort").Enable(false);
+		main_dialog.GetControl("m_button_build").Enable(true);
+		main_dialog.GetControl("m_button_toggle_all").Enable(true);
+	}
+	
 	function OnCompilingFinished(evt)
 	{
 		if(current_compiling.compiling == true)
@@ -408,6 +417,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			}
 			if(current_compiling.next_target < current_compiling.build_list.len())
 			{
+				main_dialog.GetControl("m_build_gauge").SetValue(current_compiling.next_target);
 				local proj = FindProject(current_compiling.build_list[current_compiling.next_target].project);
 				GetProjectManager().SetProject(proj,false);
 				line("start building " + current_compiling.build_list[current_compiling.next_target].project + "/" + current_compiling.build_list[current_compiling.next_target].target.GetTitle());
@@ -421,8 +431,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			{
 				// we have build the whole list
 				// lets clean up
-				current_compiling.compiling = false;
-				GetProjectManager().SetProject(old_project,false);
+				EndBuild();
 				wxBell();
 				InfoWindow("Compiling finished","the compiling has been finished",5000,1);
 				main_dialog.GetControl("m_button_abort").Enable(false);
@@ -433,9 +442,8 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 	function OnAbortBuild(evt)
 	{
 		line("Abort Building");
-		current_compiling.compiling = false;
 		GetCompilerPlugin().KillProcess();
-		main_dialog.GetControl("m_button_abort").Enable(false);
+		EndBuild();
 	}
 
     function ShowDialog()
@@ -465,11 +473,6 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			
 			PropgridHandler = wxPropertyGridWrapper(main_dialog.GetControl("m_propertygrid"));
 			local window = main_dialog.GetWindow();
-			window.SetLabel("Hallo");
-			//window.Fit();
-			//window.SetAutoLayout(true);
-			//local sizer = main_dialog.GetControl("main_sizer");
-			//sizer.Fit(window);
 			
 			line("Register events");
             main_dialog.RegisterEventHandler(wxEVT_CLOSE_WINDOW,XRCID("selective_compiling_main_diag"),this,"OnClose");
@@ -480,24 +483,6 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			RegisterCBEvent(this,cbEVT_COMPILER_FINISHED,"OnCompilingFinished");
 			
 			main_dialog.GetControl("m_button_abort").Enable(false);
-			
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_CHECKBOX_CLICKED,XRCID("controls_unchecked_checkbox"),this,"OnCheckbox");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_CHECKBOX_CLICKED,XRCID("controls_unchecked_checkbox"),this,"OnCheckbox");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_COMBOBOX_SELECTED,XRCID("controls_combobox"),this,"OnComboBox");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_TEXT_UPDATED,XRCID("controls_combobox"),this,"OnComboBoxText");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_RADIOBOX_SELECTED,XRCID("controls_radiobox"),this,"OnRadioBox");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_HYPERLINK,XRCID("controls_hyperlink"),this,"OnURLClick");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_CHOICE_SELECTED,XRCID("controls_choice"),this,"OnChoice");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_LISTBOX_SELECTED,XRCID("m_listBox1"),this,"OnListBox");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_RADIOBUTTON_SELECTED,XRCID("m_radioBtn1"),this,"OnRadioButton");
-            // dialog.RegisterEventHandler(wxEVT_CHECKLISTBOX,XRCID("m_checkList1"),this,"OnCheckList");
-            // dialog.RegisterEventHandler(wxEVT_SCROLL_CHANGED,XRCID("m_slider1"),this,"OnSlider");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,XRCID("m_toggleBtn1"),this,"OnTogButton");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_COLOURPICKER_CHANGED,XRCID("m_colourPicker1"),this,"OnColour");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_FILEPICKER_CHANGED,XRCID("m_filePicker1"),this,"OnFilePicker");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_DIRPICKER_CHANGED,XRCID("m_dirPicker1"),this,"OnFilePicker");
-            // dialog.RegisterEventHandler(wxEVT_COMMAND_SPINCTRL_UPDATED,XRCID("m_spinCtrl1"),this,"OnSpinCtrl");
-
 			
 			loaded = true;
 		
@@ -542,7 +527,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		target = 0,
 		compiling = false,
 		project = 0,
-		next_target = 0
+		next_target = 0,
 	};
 	old_project = 0;
 }
