@@ -187,7 +187,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		local count = 0;
 		foreach(idx, a in table)
 		{
-			line(" * CT * #" + count + " idx= "+idx);
+			//line(" * CT * #" + count + " idx= "+idx);
 			local children = {};
 			local cur_element = {};
 			
@@ -198,7 +198,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			cur_element["value"] <- true;	// Type BOOL
 			if(a.rawin("targets"))
 			{
-				line(" * CT * #" + count + " idx= "+idx+" children found");
+				//line(" * CT * #" + count + " idx= "+idx+" children found");
 				children = CreatePropertyGridFromProjectTable(a.targets);
 				cur_element["children"] <- children;
 			}
@@ -331,6 +331,8 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		next_target = 0
 		};
 		
+		main_dialog.GetControl("m_build_text").SetLabel("Prepare...");
+		
 		line("### start building ");
 		foreach(idx,a in property_tabel)
 		{
@@ -340,7 +342,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			
 			if(WxStringToBool(build))
 			{
-				line("So lets build");
+				//line("So lets build");
 				local children = a["children"];
 				foreach(idx2,b in children)
 				{
@@ -349,13 +351,13 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 					if(WxStringToBool(target_value))
 					{
 						
-						line("# build in \"" + project + "\" Target \"" + target+ "\"");
+						//line("# build in \"" + project + "\" Target \"" + target+ "\"");
 						local build_target = FindBuildTarget(build_tree,project + "/" + target);
 						if(build_target.result == 0)
 							line("Could not find Target");
 						else
 						{
-							line("Type of build target: " + typeof build_target.value + " to string:" + build_target.value);
+							//line("Type of build target: " + typeof build_target.value + " to string:" + build_target.value);
 							local tmp_list = {};
 							tmp_list.project <- project;
 							tmp_list.target <- build_target.value;
@@ -405,6 +407,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		main_dialog.GetControl("m_button_abort").Enable(false);
 		main_dialog.GetControl("m_button_build").Enable(true);
 		main_dialog.GetControl("m_button_toggle_all").Enable(true);
+		main_dialog.GetControl("m_build_text").SetLabel("Finished...");
 	}
 	
 	function OnCompilingFinished(evt)
@@ -417,6 +420,8 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			}
 			if(current_compiling.next_target < current_compiling.build_list.len())
 			{
+				main_dialog.GetControl("m_build_text").SetLabel(current_compiling.next_target + "/" + current_compiling.build_list.len());
+				
 				main_dialog.GetControl("m_build_gauge").SetValue(current_compiling.next_target);
 				local proj = FindProject(current_compiling.build_list[current_compiling.next_target].project);
 				GetProjectManager().SetProject(proj,false);

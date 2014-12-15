@@ -7,44 +7,67 @@
 		<centered>1</centered>
 		<option>1</option>
 		<object class="wxBoxSizer" name="main_sizer">
+		<orient>wxVERTICAL</orient>
 		<object class="sizeritem">
-			<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-			<border>5</border>
-			<minsize>500,500</minsize>
-			<object class="wxPropertyGrid" name="m_propertygrid">
-			</object>
-		</object>
-		<object class="sizeritem">
-			<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-			<border>5</border>
-			<object class="wxButton" name="m_button_build">
-				<label>Build</label>
-			</object>
-		</object>
-		<object class="sizeritem">
-			<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-			<border>5</border>
-			<object class="wxButton" name="m_button_toggle_all">
-				<label>Toggle All</label>
-			</object>
-		</object>
-		<object class="sizeritem">
-			<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-			<border>5</border>
-			<object class="wxButton" name="m_button_abort">
-				<label>Cancel</label>
-			</object>
-		</object>
-		<object class="sizeritem">
-        <flag>wxALIGN_CENTRE|wxALL</flag>
-        <border>5</border>
-			<object class="wxGauge" name="m_build_gauge">
-				<style>wxGA_SMOOTH</style>
-				<size>100,-1</size>
-				<max>100</max>
-				<value>100</value>
+			<object class="wxBoxSizer" name="main_sizer">
+			<orient>wxHORIZONTAL</orient>
+			<object class="sizeritem">
+				<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+				<border>5</border>
+				<minsize>500,500</minsize>
+				<object class="wxPropertyGrid" name="m_propertygrid">
 				</object>
 			</object>
+			<object class="sizeritem">	
+				<object class="wxBoxSizer" name="main_sizer">
+				<orient>wxVERTICAL</orient>
+				<object class="sizeritem">
+					<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+					<border>5</border>
+					<object class="wxButton" name="m_button_build">
+						<label>Build</label>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+					<border>5</border>
+					<object class="wxButton" name="m_button_toggle_all">
+						<label>Toggle All</label>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+					<border>5</border>
+					<object class="wxButton" name="m_button_abort">
+						<label>Cancel</label>
+					</object>
+				</object>
+				</object>
+			</object>
+			</object>
+		</object>
+		<object class="sizeritem">
+			<object class="wxBoxSizer" name="main_sizer">
+				<orient>wxHORIZONTAL</orient>
+				<object class="sizeritem">
+					<flag>wxALL|wxEXPAND</flag>
+					<border>5</border>
+					<object class="wxGauge" name="m_build_gauge">
+							<style>wxGA_SMOOTH</style>
+							<size>100,-1</size>
+							<max>100</max>
+							<value>100</value>
+					</object>
+				</object>
+				<object class="sizeritem">
+				<flag>wxALIGN_CENTRE|wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticText" name="m_build_text">
+				<label>Finished</label>
+				</object>
+				</object>
+			</object>
+		</object>
 		</object>
 	</object>
 </resource>

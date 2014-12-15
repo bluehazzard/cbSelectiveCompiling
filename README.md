@@ -3,11 +3,11 @@ cbSelectiveCompiling is a plugin for Code::blocks (http://www.codeblocks.org/)
 
 ## What it does:
 this plugin is created for two purposes:
-* demonstration of the capabilities of the new squirrel scripting engine in the testversion of c::b found here https://github.com/bluehazzard/codeblocks_sf
+* demonstration of the capabilities of the new squirrel scripting engine in the test version of c::b found here https://github.com/bluehazzard/codeblocks_sf
 * a handy tool to compile only the targets and projects you want to compile
 
 ## What do you need:
-1. a c::b test version with the new scripting capabilities. You can find it here: https://github.com/bluehazzard/codeblocks_sf . You have to compile it for yourself. A instruction to compile c::b can be found on the official c::b wiki
+1. a c::b test version with the new scripting capabilities. You can find it here: https://github.com/bluehazzard/codeblocks_sf . You have to compile it for yourself. A instruction how to compile c::b can be found on the official c::b wiki
 2. this repository ;)
 
 ## How to install:
@@ -19,9 +19,10 @@ this plugin is created for two purposes:
 ## How to use:
 1. open a c::b workspace with multiple projects or a project with multiple targets
 2. Go to "Plugins -> Selective Compile"
-3. Select the projects and targets you want to compile. Be aware that you have to select the project to compile any target within the project
+3. Select the projects and targets you want to compile. Be aware that you have to enable the project to compile any target within the project
+4. Hit Build. The script will now build all selected targets. The error messages and warnings can be seen in the output  window. The dialog is not modal, so you can move it anywhere and work with the normal c::b gui (ideal for multiple monitors) 
 
 ## Be aware:
 * This is the earliest version of this plugin and also the c::b version is not fully tested. There can sleep a lot bugs and ui errors under the hood. If you find some, please report them. 
 * This is the first version of the ui. I'm not familiar with the xrc file format of wxWidgets, and I will improve the ui as soon as possible, but for the first testing this should be enough.
-* For the unix guys: i will add a bash script soon. Hey, you are a unix guy, open the bat and look what it does, it is really simple to write one for yourself, probably only c&p
+* For the unix guys: i will add a bash script soon. Hey, you are a unix guy, open the .bat and look what it does, it is really simple to write one for yourself, probably only c&p
