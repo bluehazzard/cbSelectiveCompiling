@@ -42,6 +42,13 @@
 						<label>Cancel</label>
 					</object>
 				</object>
+				<object class="sizeritem">
+                        <object class="wxCheckBox" name="m_stop_on_error">
+                            <label>stop on error</label>
+                        </object>
+                        <flag>wxLEFT</flag>
+                        <border>10</border>
+                 </object>
 				</object>
 			</object>
 			</object>
