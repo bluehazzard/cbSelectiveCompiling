@@ -442,7 +442,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			
 			// Load the resource zip file
 			
-			if(LoadResource("SelectiveCompiling.zip") == false)
+			if(LoadResource(this,"SelectiveCompiling.zip") == false)
 			{
 				DisplayError("Could not load resource \"SelectiveCompiling.zip\" ");
 				return;
