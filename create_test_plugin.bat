@@ -3,6 +3,10 @@
 echo deleting old files
 del /q SelectiveCompiling.cbplugin
 
+echo copy files
+copy /Y TestScriptPlugin/install.xml resources/install.xml
+copy /Y TestScriptPlugin/manifest.xml resources/manifest.xml
+
 
 echo Compressing Resources
 zip -jqu9 SelectiveCompiling.zip resources/*

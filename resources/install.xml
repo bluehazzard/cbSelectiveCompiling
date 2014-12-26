@@ -1,11 +1,7 @@
 <?xml version="1.0" standalone=no>
 <CodeBlocks_plugin_install_file>
 	<Plugin type="SCRIPT" name="SelectiveCompiling" version_major=1 version_minor=0>
-		<preinstall>
-
-		</preinstall>
-		<postinstall>
-
-		</postinstall>
+		<install_script file="install_script.nut">
+                </install_script>
 	</Plugin>
 </CodeBlocks_plugin_install_file>
