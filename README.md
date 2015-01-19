@@ -1,4 +1,4 @@
-#cdSelectiveCompiling
+#cbSelectiveCompiling
 cbSelectiveCompiling is a plugin for Code::blocks (http://www.codeblocks.org/)
 
 ## What it does:

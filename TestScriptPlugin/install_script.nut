@@ -104,9 +104,7 @@ class tmp_install_plugin extends cbScriptPlugin
 			
 			// Load the resource from string
             local tmp_string = RemoveNewLine(dialog_res);
-            ::Message("Preinstall3",tmp_string,wxOK);
             local tmp_string2 = ::wxBase64Decode(tmp_string);
-            ::Message("Preinstall4",tmp_string2,wxOK);
 			if(::LoadResourceFromString(this,tmp_string2) == false)
 			{
 				DisplayError("Could not load resource from string");
@@ -147,8 +145,7 @@ function pre_install(status)
     RegisterPlugin(plugin);
     try
     {
-        local ret = plugin.ShowDialog();
-        Message("Preinstall: return = "+ ret,"Install cbSelectiveCompiling",wxOK);  
+        ret = plugin.ShowDialog();
     }
     catch(error)
     {
