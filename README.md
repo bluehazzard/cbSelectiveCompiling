@@ -1,6 +1,9 @@
 #cbSelectiveCompiling
 cbSelectiveCompiling is a plugin for Code::blocks (http://www.codeblocks.org/)
 
+Windows screenshot:
+![screenshot_windows](screenshots/windows_1.PNG)
+
 ## What it does:
 this plugin is created for two purposes:
 * demonstration of the capabilities of the new squirrel scripting engine in the test version of c::b found here https://github.com/bluehazzard/codeblocks_sf
