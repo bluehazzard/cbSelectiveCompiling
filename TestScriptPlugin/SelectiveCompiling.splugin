@@ -339,6 +339,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 				}
 			}
 			main_dialog.GetControl("m_build_gauge").Pulse();
+			main_dialog.GetControl("m_project_gauge").Pulse();
 		}
 		BeginBuild();
 		OnCompilingFinished(0);

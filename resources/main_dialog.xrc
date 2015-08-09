@@ -1,80 +1,105 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<resource xmlns="http://www.wxwindows.org/wxxrc">
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.5.3.0">
 	<object class="wxDialog" name="selective_compiling_main_diag">
-		<style>wxCAPTION|wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</style>
-		<title>Selective Compiling</title>
-		<size>500,500</size>
+		<style>wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</style>
+		<title></title>
 		<centered>1</centered>
-		<option>1</option>
-		<object class="wxBoxSizer" name="main_sizer">
-		<orient>wxVERTICAL</orient>
-		<object class="sizeritem">
-			<object class="wxBoxSizer" name="main_sizer">
-			<orient>wxHORIZONTAL</orient>
+		<object class="wxGridBagSizer">
+			<vgap>0</vgap>
+			<hgap>0</hgap>
+			<growablecols>0</growablecols>
+			<growablerows>0</growablerows>
 			<object class="sizeritem">
-				<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+				<cellpos>0,1</cellpos>
+				<cellspan>1,1</cellspan>
+				<flag>wxEXPAND</flag>
 				<border>5</border>
-				<minsize>500,500</minsize>
-				<object class="wxPropertyGrid" name="m_propertygrid">
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="m_button_build">
+							<label>Build</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="m_button_toggle_all">
+							<label>Toggle All</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="m_button_abort">
+							<label>Cancel</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxCheckBox" name="m_stop_on_error">
+							<label>stop on error</label>
+							<checked>0</checked>
+						</object>
+					</object>
 				</object>
 			</object>
-			<object class="sizeritem">	
-				<object class="wxBoxSizer" name="main_sizer">
-				<orient>wxVERTICAL</orient>
-				<object class="sizeritem">
-					<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-					<border>5</border>
-					<object class="wxButton" name="m_button_build">
-						<label>Build</label>
+			<object class="sizeritem">
+				<cellpos>0,0</cellpos>
+				<cellspan>1,1</cellspan>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxPropertyGrid" name="m_propertygrid" />
+			</object>
+			<object class="sizeritem">
+				<cellpos>1,0</cellpos>
+				<cellspan>1,1</cellspan>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxGauge" name="m_build_gauge">
+							<style>wxGA_HORIZONTAL|wxGA_SMOOTH</style>
+							<range>100</range>
+							<value>0</value>
+						</object>
 					</object>
-				</object>
-				<object class="sizeritem">
-					<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-					<border>5</border>
-					<object class="wxButton" name="m_button_toggle_all">
-						<label>Toggle All</label>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxGauge" name="m_project_gauge">
+							<style>wxGA_HORIZONTAL|wxGA_SMOOTH</style>
+							<range>100</range>
+							<value>0</value>
+						</object>
 					</object>
-				</object>
-				<object class="sizeritem">
-					<flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-					<border>5</border>
-					<object class="wxButton" name="m_button_abort">
-						<label>Cancel</label>
-					</object>
-				</object>
-				<object class="sizeritem">
-                        <object class="wxCheckBox" name="m_stop_on_error">
-                            <label>stop on error</label>
-                        </object>
-                        <flag>wxLEFT</flag>
-                        <border>10</border>
-                 </object>
 				</object>
 			</object>
-			</object>
-		</object>
-		<object class="sizeritem">
-			<object class="wxBoxSizer" name="main_sizer">
-				<orient>wxHORIZONTAL</orient>
-				<object class="sizeritem">
-					<flag>wxALL|wxEXPAND</flag>
-					<border>5</border>
-					<object class="wxGauge" name="m_build_gauge">
-							<style>wxGA_SMOOTH</style>
-							<size>100,-1</size>
-							<max>100</max>
-							<value>100</value>
-					</object>
-				</object>
-				<object class="sizeritem">
-				<flag>wxALIGN_CENTRE|wxALL</flag>
+			<object class="sizeritem">
+				<cellpos>1,1</cellpos>
+				<cellspan>1,1</cellspan>
+				<flag>wxALIGN_CENTER|wxALL</flag>
 				<border>5</border>
 				<object class="wxStaticText" name="m_build_text">
-				<label>Finished</label>
-				</object>
+					<label>MyLabel</label>
+					<wrap>-1</wrap>
 				</object>
 			</object>
-		</object>
 		</object>
 	</object>
 </resource>
