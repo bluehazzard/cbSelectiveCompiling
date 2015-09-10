@@ -50,7 +50,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
         //ShowDialog();
         return 0;
     }
-	
+
 	function DisplayError(message)
 	{
 		error(message);
@@ -85,7 +85,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		[0].name
 		[0].targets[0].name
 		[0].targets[0].target
-	
+
 	*/
 	function GetWorkspaceTree()
 	{
@@ -93,7 +93,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		local project_count = project_manager.GetProjectCount();
 		//util.line("Projects found: " + project_count);
 		local project_tree = [];
-		
+
 		for(local i = 0; i < project_count; i++)
 		{
 			local tmp_project = {};
@@ -114,16 +114,16 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 				tmp_target.name <- act_target_name;
 				tmp_target.target <- act_target;
 				//util.line("   Target " + a + ": "+  act_target_name);
-				
+
 				tmp_project.targets.append(tmp_target);
 			}
 			project_tree.append(tmp_project);
 		}
 		return project_tree;
 	}
-	
-	
-	
+
+
+
 	function CreatePropertyGridTableFromTable(table)
 	{
 		local return_table = {};
@@ -133,7 +133,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			//util.line(" * CT * #" + count + " idx= "+idx);
 			local children = {};
 			local cur_element = {};
-			
+
 			cur_element["name"] <- idx;
 			cur_element["label"] <- idx;
 			cur_element["type"] <- 2;	// Type BOOL
@@ -150,7 +150,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		}
 		return return_table;
 	}
-	
+
 	function CreatePropertyGridFromProjectTable(table)
 	{
 		local return_table = {};
@@ -160,7 +160,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			//util.line(" * CT * #" + count + " idx= "+idx);
 			local children = {};
 			local cur_element = {};
-			
+
 			cur_element["name"] <- a.name;
 			cur_element["label"] <- a.name;
 			cur_element["type"] <- 2;	// Type BOOL
@@ -177,20 +177,20 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		}
 		return return_table;
 	}
-	
 
-	
+
+
 	function OnClose (evt)
 	{
 		util.line("Close the Window...");
-		evt.Skip(true);		
+		evt.Skip(true);
 	}
-	
+
 	function FindBuildTarget(table,name)
 	{
 		if(typeof name != "wxString")
 			name = wxString(name);
-			
+
 		local return_value = {value = 0, result = 0};
 		local project = name.BeforeFirst("/");
 		local target = name.AfterFirst("/");
@@ -210,12 +210,12 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 						return return_value;
 					}
 				}
-				
+
 			}
 		}
 		return return_value;
 	}
-	
+
 	function WxStringToBool(wx_string)
 	{
 		if(typeof wx_string != "wxString")
@@ -228,7 +228,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		else
 			return false;
 	}
-	
+
 	function CreateTableFromPropertyGridTable(pg_table)
 	{
 		local return_table = {};
@@ -247,7 +247,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		}
 		return return_table;
 	}
-	
+
 	function SetKeyOfTable(table,key,value)
 	{
 		foreach(idx, a in table)
@@ -262,7 +262,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			}
 		}
 	}
-	
+
 	function OnToggleAll(evt)
 	{
 		local property_table = CreatePropertyGridFromProjectTable(build_tree);
@@ -278,7 +278,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			current_value = true;
 			SetKeyOfTable(property_table,"value",true);
 		}
-			
+
 		PropgridHandler.Clear();
 
         if(PropgridHandler.Populate(property_table) < 0)
@@ -287,12 +287,12 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			throw "error";
 		}
 	}
-	
+
 	function OnBuildClick(evt)
 	{
 		local property_tabel = PropgridHandler.GetRoot();
 		local tab = CreatePropertyGridFromProjectTable(property_tabel);
-		
+
 		current_compiling = {
 		build_list = array(0),
 		target = 0,
@@ -300,16 +300,16 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		project = 0,
 		next_target = 0
 		};
-		
+
 		main_dialog.GetControl("m_build_text").SetLabel("Prepare...");
-		
+
 		util.line("### start building ");
 		foreach(idx,a in property_tabel)
 		{
 			local project = a["label"];
 			local build = a["value"];
 			util.line("Found Project: \"" + project + "\" with value " + build);
-			
+
 			if(WxStringToBool(build))
 			{
 				//util.line("So lets build");
@@ -320,7 +320,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 					local target_value = b["value"];
 					if(WxStringToBool(target_value))
 					{
-						
+
 						//util.line("# build in \"" + project + "\" Target \"" + target+ "\"");
 						local build_target = FindBuildTarget(build_tree,project + "/" + target);
 						if(build_target.result == 0)
@@ -344,7 +344,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		BeginBuild();
 		OnCompilingFinished(0);
 	}
-	
+
 	function FindProject(name)
 	{
 		local count = GetProjectManager().GetProjectCount();
@@ -358,7 +358,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		}
 		return 0;
 	}
-	
+
 	function BeginBuild()
 	{
 		main_dialog.GetControl("m_build_gauge").SetRange(current_compiling.build_list.len());
@@ -368,7 +368,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		main_dialog.GetControl("m_button_toggle_all").Enable(false);
 		old_project = GetProjectManager().GetActiveProject();
 	}
-	
+
 	function EndBuild(message)
 	{
 		main_dialog.GetControl("m_build_gauge").SetRange(100);
@@ -380,7 +380,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 		main_dialog.GetControl("m_button_toggle_all").Enable(true);
 		main_dialog.GetControl("m_build_text").SetLabel(message);
 	}
-	
+
 	function OnCompilingFinished(evt)
 	{
 		if(current_compiling.compiling == true)
@@ -402,7 +402,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			if(current_compiling.next_target < current_compiling.build_list.len())
 			{
 				main_dialog.GetControl("m_build_text").SetLabel(current_compiling.next_target + "/" + current_compiling.build_list.len() + " (" + current_compiling.build_list[current_compiling.next_target].target.GetTitle() + ")" );
-				
+
 				main_dialog.GetControl("m_build_gauge").SetValue(current_compiling.next_target);
 				local proj = FindProject(current_compiling.build_list[current_compiling.next_target].project);
 				GetProjectManager().SetProject(proj,false);
@@ -410,7 +410,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 				local index = current_compiling.next_target;
 				current_compiling.next_target++;
 				local result = GetCompilerPlugin().Build(current_compiling.build_list[index].target);
-				
+
 				//util.line("Build finised with result: " + result);
 			}
 			else
@@ -423,7 +423,7 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			}
 		}
 	}
-	
+
 	function OnAbortBuild(evt)
 	{
 		util.line("Abort Building");
@@ -435,50 +435,50 @@ class user_dialog_test_Plugin extends cbScriptPlugin
     {
         util.line("Start " + info.name);
 		util.line("Version: " + info.version);
-        
-		
+
+
 		if(loaded == false)
 		{
 			main_dialog = CreateWxDialog(this);
-			
+
 			// Load the resource zip file
-			
+
 			if(LoadResource(this,"SelectiveCompiling.zip") == false)
 			{
 				DisplayError("Could not load resource \"SelectiveCompiling.zip\" ");
 				return;
 			}
-			
+
 			local ret = main_dialog.LoadFromXRCPool("selective_compiling_main_diag");
 			if(ret != RESOURCE_LOADED_SUCCESFULLY)
 			{
 				DisplayError("Could not load \"selective_compiling_main_diag\" from Resource pool");
 				return;
 			}
-			
+
 			PropgridHandler = wxPropertyGridWrapper(main_dialog.GetControl("m_propertygrid"));
 			local window = main_dialog.GetWindow();
-			
+
 			util.line("Register events");
             main_dialog.RegisterEventHandler(wxEVT_CLOSE_WINDOW,XRCID("selective_compiling_main_diag"),this,"OnClose");
 			main_dialog.RegisterEventHandler(wxEVT_BUTTON,XRCID("m_button_build"),this,"OnBuildClick");
 			main_dialog.RegisterEventHandler(wxEVT_BUTTON,XRCID("m_button_toggle_all"),this,"OnToggleAll");
 			main_dialog.RegisterEventHandler(wxEVT_BUTTON,XRCID("m_button_abort"),this,"OnAbortBuild");
-			
+
 			RegisterCBEvent(this,cbEVT_COMPILER_FINISHED,"OnCompilingFinished");
-			
+
 			main_dialog.GetControl("m_button_abort").Enable(false);
-			
+
 			loaded = true;
-		
+
 		}
-		
+
 		build_tree = GetWorkspaceTree();
 		util.PrintTable(build_tree,0);
 		property_table = CreatePropertyGridFromProjectTable(build_tree);
 		util.line("# property grid table: ");
 		util.PrintTable(property_table,0);
-		
+
 		PropgridHandler.Clear();
 
         if(PropgridHandler.Populate(property_table) < 0)
@@ -486,16 +486,16 @@ class user_dialog_test_Plugin extends cbScriptPlugin
 			error("Could not populate the property grid\nTry to throw an error...\n");
 			throw "error";
 		}
-		
+
 		main_dialog.Show(true);
 
-		
-        //local retcode = dialog.Show(true);
-		
 
-		
-		
-		
+        //local retcode = dialog.Show(true);
+
+
+
+
+
         //print("dialog exited with " + retcode);
 
     };

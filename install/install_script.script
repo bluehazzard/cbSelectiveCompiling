@@ -11,43 +11,43 @@
 // user-dialog-test
 // Script plugins must extend cbScriptPlugin
 
-/*local dialog_res = @"PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9
-InllcyIgPz4KPHJlc291cmNlIHhtbG5zPSJodHRwOi8vd3d3Lnd4d2luZG93cy5v
-cmcvd3h4cmMiPgoJPG9iamVjdCBjbGFzcz0id3hEaWFsb2ciIG5hbWU9Imluc3Rh
-bGxfZGlhbG9nIj4KCQk8dGl0bGU+SW5zdGFsbGluZyBjYlNlbGVjdGl2ZUNvbXBp
-bGluZzwvdGl0bGU+CgkJPGNlbnRlcmVkPjE8L2NlbnRlcmVkPgoJCTxvYmplY3Qg
-Y2xhc3M9Ind4RmxleEdyaWRTaXplciI+CgkJCTxjb2xzPjE8L2NvbHM+CgkJCTxv
-YmplY3QgY2xhc3M9InNpemVyaXRlbSI+CgkJCQk8b2JqZWN0IGNsYXNzPSJ3eFN0
-YXRpY1RleHQiIG5hbWU9IklEX1NUQVRJQ1RFWFQxIj4KCQkJCQk8bGFiZWw+RG8g
-eW91IHdhbnQgdG8gaW5zdGFsbCBjYlNlbGVjdGl2ZUNvbXBpbGluZyBwbHVnaW4/
-PC9sYWJlbD4KCQkJCTwvb2JqZWN0PgoJCQkJPGZsYWc+d3hBTEx8d3hBTElHTl9D
-RU5URVJfSE9SSVpPTlRBTHx3eEFMSUdOX0NFTlRFUl9WRVJUSUNBTDwvZmxhZz4K
-CQkJCTxib3JkZXI+NTwvYm9yZGVyPgoJCQkJPG9wdGlvbj4xPC9vcHRpb24+CgkJ
-CTwvb2JqZWN0PgoJCQk8b2JqZWN0IGNsYXNzPSJzaXplcml0ZW0iPgoJCQkJPG9i
-amVjdCBjbGFzcz0id3hIeXBlcmxpbmtDdHJsIiBuYW1lPSJtX2xpbmsiPgoJCQkJ
-CTxsYWJlbD5odHRwczovL2dpdGh1Yi5jb20vYmx1ZWhhenphcmQvY2RTZWxlY3Rp
-dmVDb21waWxpbmc8L2xhYmVsPgoJCQkJPC9vYmplY3Q+CgkJCQk8ZmxhZz53eEFM
-THx3eEFMSUdOX0NFTlRFUl9IT1JJWk9OVEFMfHd4QUxJR05fQ0VOVEVSX1ZFUlRJ
-Q0FMPC9mbGFnPgoJCQkJPGJvcmRlcj41PC9ib3JkZXI+CgkJCQk8b3B0aW9uPjE8
-L29wdGlvbj4KCQkJPC9vYmplY3Q+CgkJCTxvYmplY3QgY2xhc3M9InNpemVyaXRl
-bSI+CgkJCQk8b2JqZWN0IGNsYXNzPSJ3eEJveFNpemVyIj4KCQkJCQk8b2JqZWN0
-IGNsYXNzPSJzaXplcml0ZW0iPgoJCQkJCQk8b2JqZWN0IGNsYXNzPSJ3eEJ1dHRv
-biIgbmFtZT0ibV9iX3llcyI+CgkJCQkJCQk8bGFiZWw+WUVTPC9sYWJlbD4KCQkJ
-CQkJPC9vYmplY3Q+CgkJCQkJCTxmbGFnPnd4QUxMfHd4QUxJR05fQ0VOVEVSX0hP
-UklaT05UQUx8d3hBTElHTl9DRU5URVJfVkVSVElDQUw8L2ZsYWc+CgkJCQkJCTxi
-b3JkZXI+NTwvYm9yZGVyPgoJCQkJCQk8b3B0aW9uPjE8L29wdGlvbj4KCQkJCQk8
-L29iamVjdD4KCQkJCQk8b2JqZWN0IGNsYXNzPSJzaXplcml0ZW0iPgoJCQkJCQk8
-b2JqZWN0IGNsYXNzPSJ3eEJ1dHRvbiIgbmFtZT0ibV9iX25vIj4KCQkJCQkJCTxs
-YWJlbD5OTzwvbGFiZWw+CgkJCQkJCTwvb2JqZWN0PgoJCQkJCQk8ZmxhZz53eEFM
-THx3eEFMSUdOX0NFTlRFUl9IT1JJWk9OVEFMfHd4QUxJR05fQ0VOVEVSX1ZFUlRJ
-Q0FMPC9mbGFnPgoJCQkJCQk8Ym9yZGVyPjU8L2JvcmRlcj4KCQkJCQkJPG9wdGlv
-bj4xPC9vcHRpb24+CgkJCQkJPC9vYmplY3Q+CgkJCQk8L29iamVjdD4KCQkJCTxm
-bGFnPnd4QUxMfHd4QUxJR05fQ0VOVEVSX0hPUklaT05UQUx8d3hBTElHTl9DRU5U
-RVJfVkVSVElDQUw8L2ZsYWc+CgkJCQk8Ym9yZGVyPjU8L2JvcmRlcj4KCQkJCTxv
-cHRpb24+MTwvb3B0aW9uPgoJCQk8L29iamVjdD4KCQk8L29iamVjdD4KCTwvb2Jq
-ZWN0Pgo8L3Jlc291cmNlPg=="*/
-
 local dialog_res = @"PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVR
+GLTgiIHN0YW5kYWxvbmU9InllcyIgPz4KPHJlc291cmNlIHhtbG5zPSJodHRwOi8
+vd3d3Lnd4d2luZG93cy5vcmcvd3h4cmMiPgoJPG9iamVjdCBjbGFzcz0id3hEaWF
+sb2ciIG5hbWU9Imluc3RhbGxfZGlhbG9nIj4KCQk8dGl0bGU+SW5zdGFsbGluZyB
+jYlNlbGVjdGl2ZUNvbXBpbGluZzwvdGl0bGU+CgkJPGNlbnRlcmVkPjE8L2NlbnR
+lcmVkPgoJCTxvYmplY3QgY2xhc3M9Ind4RmxleEdyaWRTaXplciI+CgkJCTxjb2x
+zPjE8L2NvbHM+CgkJCTxvYmplY3QgY2xhc3M9InNpemVyaXRlbSI+CgkJCQk8b2J
+qZWN0IGNsYXNzPSJ3eFN0YXRpY1RleHQiIG5hbWU9IklEX1NUQVRJQ1RFWFQxIj4
+KCQkJCQk8bGFiZWw+RG8geW91IHdhbnQgdG8gaW5zdGFsbCBjYlNlbGVjdGl2ZUN
+vbXBpbGluZyBwbHVnaW4/PC9sYWJlbD4KCQkJCTwvb2JqZWN0PgoJCQkJPGZsYWc
++d3hBTEx8d3hBTElHTl9DRU5URVJfSE9SSVpPTlRBTHx3eEFMSUdOX0NFTlRFUl9
+WRVJUSUNBTDwvZmxhZz4KCQkJCTxib3JkZXI+NTwvYm9yZGVyPgoJCQkJPG9wdGl
+vbj4xPC9vcHRpb24+CgkJCTwvb2JqZWN0PgoJCQk8b2JqZWN0IGNsYXNzPSJzaXp
+lcml0ZW0iPgoJCQkJPG9iamVjdCBjbGFzcz0id3hIeXBlcmxpbmtDdHJsIiBuYW1
+lPSJtX2xpbmsiPgoJCQkJCTxsYWJlbD5odHRwczovL2dpdGh1Yi5jb20vYmx1ZWh
+henphcmQvY2RTZWxlY3RpdmVDb21waWxpbmc8L2xhYmVsPgoJCQkJPC9vYmplY3Q
++CgkJCQk8ZmxhZz53eEFMTHx3eEFMSUdOX0NFTlRFUl9IT1JJWk9OVEFMfHd4QUx
+JR05fQ0VOVEVSX1ZFUlRJQ0FMPC9mbGFnPgoJCQkJPGJvcmRlcj41PC9ib3JkZXI
++CgkJCQk8b3B0aW9uPjE8L29wdGlvbj4KCQkJPC9vYmplY3Q+CgkJCTxvYmplY3Q
+gY2xhc3M9InNpemVyaXRlbSI+CgkJCQk8b2JqZWN0IGNsYXNzPSJ3eEJveFNpemV
+yIj4KCQkJCQk8b2JqZWN0IGNsYXNzPSJzaXplcml0ZW0iPgoJCQkJCQk8b2JqZWN
+0IGNsYXNzPSJ3eEJ1dHRvbiIgbmFtZT0ibV9iX3llcyI+CgkJCQkJCQk8bGFiZWw
++WUVTPC9sYWJlbD4KCQkJCQkJPC9vYmplY3Q+CgkJCQkJCTxmbGFnPnd4QUxMfHd
+4QUxJR05fQ0VOVEVSX0hPUklaT05UQUx8d3hBTElHTl9DRU5URVJfVkVSVElDQUw
+8L2ZsYWc+CgkJCQkJCTxib3JkZXI+NTwvYm9yZGVyPgoJCQkJCQk8b3B0aW9uPjE
+8L29wdGlvbj4KCQkJCQk8L29iamVjdD4KCQkJCQk8b2JqZWN0IGNsYXNzPSJzaXp
+lcml0ZW0iPgoJCQkJCQk8b2JqZWN0IGNsYXNzPSJ3eEJ1dHRvbiIgbmFtZT0ibV9
+iX25vIj4KCQkJCQkJCTxsYWJlbD5OTzwvbGFiZWw+CgkJCQkJCTwvb2JqZWN0Pgo
+JCQkJCQk8ZmxhZz53eEFMTHx3eEFMSUdOX0NFTlRFUl9IT1JJWk9OVEFMfHd4QUx
+JR05fQ0VOVEVSX1ZFUlRJQ0FMPC9mbGFnPgoJCQkJCQk8Ym9yZGVyPjU8L2JvcmR
+lcj4KCQkJCQkJPG9wdGlvbj4xPC9vcHRpb24+CgkJCQkJPC9vYmplY3Q+CgkJCQk
+8L29iamVjdD4KCQkJCTxmbGFnPnd4QUxMfHd4QUxJR05fQ0VOVEVSX0hPUklaT05
+UQUx8d3hBTElHTl9DRU5URVJfVkVSVElDQUw8L2ZsYWc+CgkJCQk8Ym9yZGVyPjU
+8L2JvcmRlcj4KCQkJCTxvcHRpb24+MTwvb3B0aW9uPgoJCQk8L29iamVjdD4KCQk
+8L29iamVjdD4KCTwvb2JqZWN0Pgo8L3Jlc291cmNlPg=="
+
+/*local dialog_res = @"PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVR
 GLTgiIHN0YW5kYWxvbmU9InllcyIgPz4NCjxyZXNvdXJjZSB4bWxucz0iaHR0cDo
 vL3d3dy53eHdpbmRvd3Mub3JnL3d4eHJjIiB2ZXJzaW9uPSIyLjUuMy4wIj4NCgk
 8b2JqZWN0IGNsYXNzPSJ3eERpYWxvZyIgbmFtZT0iaW5zdGFsbF9kaWFsb2ciPg0
@@ -83,7 +83,7 @@ qZWN0Pg0KCQkJCTwvb2JqZWN0Pg0KCQkJCTxmbGFnPnd4QUxMfHd4QUxJR05fQ0V
 OVEVSX0hPUklaT05UQUx8d3hBTElHTl9DRU5URVJfVkVSVElDQUw8L2ZsYWc+DQo
 JCQkJPGJvcmRlcj41PC9ib3JkZXI+DQoJCQkJPG9wdGlvbj4xPC9vcHRpb24+DQo
 JCQk8L29iamVjdD4NCgkJPC9vYmplY3Q+DQoJPC9vYmplY3Q+DQo8L3Jlc291cmN
-lPg=="
+lPg=="*/
 
 
 class tmp_install_plugin extends cbScriptPlugin
@@ -106,11 +106,11 @@ class tmp_install_plugin extends cbScriptPlugin
         tmp.Replace("\n","",true);
         return tmp;
     }
-                
+
 
     function DisplayError(message)
 	{
-		error(message);
+		::error(message);
 		::ShowMessage(message);
 	}
 
@@ -123,7 +123,7 @@ class tmp_install_plugin extends cbScriptPlugin
     {
         main_dialog.EndModal(0);
     }
-    
+
     function OnNo(evt)
     {
         main_dialog.EndModal(-2);
@@ -131,7 +131,8 @@ class tmp_install_plugin extends cbScriptPlugin
 
     function OnLink(evt)
     {
-        ::Message("Show page","page",wxOK);
+		::wxLaunchDefaultBrowser("https://github.com/bluehazzard/cbSelectiveCompiling",0);
+        //::Message("Show page","page",wxOK);
     }
 
     function ShowDialog()
@@ -140,33 +141,34 @@ class tmp_install_plugin extends cbScriptPlugin
 		if(loaded == false)
 		{
 			main_dialog = ::CreateWxDialog(this);
-			
+
 			// Load the resource from string
             local tmp_string = RemoveNewLine(dialog_res);
             local tmp_string2 = ::wxBase64Decode(tmp_string);
+            ::print(tmp_string2);
 			if(::LoadResourceFromString(this,tmp_string2) == false)
 			{
 				DisplayError("Could not load resource from string");
 				return -1;
 			}
-			
+
 			local ret = main_dialog.LoadFromXRCPool("install_dialog");
 			if(ret != RESOURCE_LOADED_SUCCESFULLY)
 			{
 				DisplayError("Could not load \"selective_compiling_main_diag\" from Resource pool");
 				return -1;
 			}
-			
+
 			main_dialog.RegisterEventHandler(wxEVT_BUTTON,::XRCID("m_b_yes"),this,"OnYes");
 			main_dialog.RegisterEventHandler(wxEVT_BUTTON,::XRCID("m_b_no"),this,"OnNo");
 			main_dialog.RegisterEventHandler(wxEVT_COMMAND_HYPERLINK,::XRCID("m_link"),this,"OnLink");
-			
+
 			loaded = true;
-		
+
 		}
-		
-		
-		
+
+
+
 		return main_dialog.ShowModal();
 
     };
@@ -186,9 +188,9 @@ function pre_install(status)
     {
         ret = plugin.ShowDialog();
     }
-    catch(error)
+    catch(error_msg)
     {
-        Message("Got an error = "+ error,"Install cbSelectiveCompiling",wxOK);
+        Message("Got an error : " + error_msg ,"Install cbSelectiveCompiling",wxOK);
     }
     UnRegisterPlugin("tmp_install_plugin");
     return ret;
